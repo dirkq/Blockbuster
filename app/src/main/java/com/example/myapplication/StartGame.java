@@ -13,6 +13,6 @@ public class StartGame extends Activity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         gameView = new GameView(this);
-        setContentView(gameView);
+        setContentView(gameView); //mooir
     }
 }
