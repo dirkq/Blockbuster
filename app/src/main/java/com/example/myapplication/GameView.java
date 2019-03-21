@@ -11,29 +11,41 @@ import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 
-import java.util.Random;
-
 
 class GameView extends View {
+//  voor het runnen van de applicatie:
     Handler handler;
     Runnable runnable;
+
+//  voor het updaten van het scherm in miliseconde:
     final int UPDATE_MILLIS = 1;
+
+//  de waarde van het display
     Display display;
     Point point;
-    int dWidth, dHeight, gap = 20;
-//    int blockHeight = 100, blockWidth = 100;
-    Bitmap ball;
-//    Bitmap block, block1,block2;
+
+//  heigth en width van het display
+    int dWidth, dHeight;
+
+//  bal
+    Bitmap ball, block1, finish;
+
+//  als de bal naar links gaat is going forward false anders true, als de bal naar boven gaat i goingup true,anders false
     Boolean goingForward = true, goingUp = false;
-    int snelheidX = 40;
-    int snelheidY = 10;
+
+//  waarde die per x aantal miliseconde toegevoegt wil worden
+    int snelheidX = 20;
+    int snelheidY = 20;
+
+//  de coordienaten van de bal
     int balX, balY;
-    boolean shot;
+
+//  of het spel gestart is en de bal weggeschoten is
+    boolean touched;
 
 
     public GameView(Context context) {
         super(context);
-
         handler = new Handler();
         runnable = new Runnable() {
             @Override
@@ -41,7 +53,6 @@ class GameView extends View {
                 invalidate();
             }
         };
-
         display = ((Activity)getContext()).getWindowManager().getDefaultDisplay();
         point = new Point();
         display.getSize(point);
@@ -50,66 +61,71 @@ class GameView extends View {
 
         ball = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
         ball = Bitmap.createScaledBitmap(ball, 100,100, false);
-
-//        block = BitmapFactory.decodeResource(getResources(), R.drawable.block);
-//        block = Bitmap.createScaledBitmap(block, blockWidth,blockHeight, false);
-//        block1 = BitmapFactory.decodeResource(getResources(), R.drawable.block);
-//        block1 = Bitmap.createScaledBitmap(block1, blockWidth,blockHeight, false);
-//        block2 = BitmapFactory.decodeResource(getResources(), R.drawable.block);
-//        block2 = Bitmap.createScaledBitmap(block2, blockWidth,blockHeight, false);
-
         balX = 50;
         balY = dHeight/2 - ball.getHeight()/2;
+
+        block1 = BitmapFactory.decodeResource(getResources(), R.drawable.block);
+        block1 = Bitmap.createScaledBitmap(block1, 300,300, false);
+
+        finish = BitmapFactory.decodeResource(getResources(), R.drawable.block);
+        finish = Bitmap.createScaledBitmap(finish, 200,200, false);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        if(touched) {
+//          checken of de bal rechts uit het scherm is:
+            int minX = 0;
+            int minY = 0;
+            int maxX = dWidth - ball.getWidth();
+            int maxY = dHeight - ball.getHeight()*2;
 
-        if(balX > dWidth - ball.getWidth()){
-            goingForward = false;
-        }
-        if(balX < 0){
-            goingForward = true;
-        }
+//          bal gaat naar link
+            if ((balX - snelheidX) < minX) {
+                if ((balX - snelheidX) < minX) {
+                    balX = minX;
+                }
+                goingForward = true;
+            }
+//          bal gaat naar rechts
+            if ((balX + snelheidX) >= maxX) {
+                if ((balX + snelheidX) > maxX) {
+                    balX = maxX;
+                }
+                goingForward = false;
+            }
 
-        if(balY > dHeight - ball.getHeight()*2){
-            goingUp = true;
-        }
-        if(balY < 0){
-            goingUp = false;
-        }
-
-
-        if(shot == true && goingUp == true) {
-            if((balY - snelheidY) < 0){
-                balY -= balY - snelheidY;
+//          bal gaat naar boven
+            if ((balY - snelheidY) < minY) {
+                if ((balY - snelheidY) < minY) {
+                    balY = minY;
+                }
                 goingUp = false;
-            }else{
+            }
+//          bal gaat naar onder
+            if ((balY + snelheidY) >= maxY) {
+                if ((balY + snelheidY) > maxY) {
+                    balY = maxY;
+                }
+                goingUp = true;
+            }
+            if (goingForward == true) {
+                balX += snelheidX;
+            }
+            else if (goingForward == false) {
+                balX -= snelheidX;
+            }
+            if (goingUp == false) {
+                balY += snelheidY;
+            }
+            else if (goingUp == true) {
                 balY -= snelheidY;
             }
         }
-        else if(shot == true && goingUp == false){
-            if((balY - snelheidY) > dHeight){
-                balY += balY - snelheidY;
-                goingUp = true;
-            }else{
-                balY += snelheidY;
-            }
-        }
 
-        if(shot == true && goingForward == true) {
-            balX += snelheidX;
-        }
-        else if(shot == true && goingForward == false){
-            balX -= snelheidX;
-        }
-
-
-//        canvas.drawBitmap(block2, dWidth/2 - blockWidth/2, dHeight/2 - blockHeight/2 - blockHeight - gap, null);
-//        canvas.drawBitmap(block, dWidth/2 - blockWidth/2, dHeight/2 - blockHeight/2, null);
-//        canvas.drawBitmap(block1, dWidth/2 - blockWidth/2, dHeight/2 - blockHeight/2 + blockHeight + gap, null);
-
+        canvas.drawBitmap(block1, dWidth/2 - block1.getWidth()/2, dHeight/2 - block1.getHeight()/2, null);
+        canvas.drawBitmap(finish, dWidth /10 *9 , dHeight/2 - finish.getHeight()/2  , null);
         canvas.drawBitmap(ball, balX, balY, null);
         handler.postDelayed(runnable, UPDATE_MILLIS);
     }
@@ -119,7 +135,7 @@ class GameView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         int action = event.getAction();
         if(action == MotionEvent.ACTION_DOWN){
-            shot = true;
+            touched = true;
         }
         return true;
     }
