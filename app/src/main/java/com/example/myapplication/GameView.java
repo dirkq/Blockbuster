@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.os.Handler;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -36,13 +37,14 @@ class GameView extends View {
     Bitmap ball, block1, finish;
     List<Blokje> blokjes = new ArrayList<>();
     int hoogte, breedte;
-
+    Rect rectball;
+    boolean b;
 //  als de bal naar links gaat is going forward false anders true, als de bal naar boven gaat i goingup true,anders false
     Boolean goingForward = true, goingUp = false;
 
 //  waarde die per x aantal miliseconde toegevoegt wil worden
-    int snelheidX = 20;
-    int snelheidY = 0;
+    int snelheidX = 10;
+    int snelheidY = 1;
 
 //  de coordienaten van de bal
     int balX, balY;
@@ -69,7 +71,7 @@ class GameView extends View {
         hoogte = dHeight/100*18;
         breedte = dWidth/20;
 
-        ball = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
+        ball = BitmapFactory.decodeResource(getResources(), R.drawable.block);
         ball = Bitmap.createScaledBitmap(ball, 100,100, false);
         balX = 50;
         balY = dHeight/2 - ball.getHeight()/2;
@@ -139,6 +141,13 @@ class GameView extends View {
         }
 
         for(int i = 0; i<blokjes.size(); i++){
+
+            rectball = new Rect(balX, balY , balX + ball.getWidth(), balY + ball.getHeight());
+
+            b = blokjes.get(i).hit(rectball);
+            if(b){
+                blokjes.get(i).setLbX(-100);
+            }
             canvas.drawBitmap(block1, blokjes.get(i).getlbX(), blokjes.get(i).getlbY(),null);
         }
 //        canvas.drawBitmap(finish, dWidth /10 *9 , dHeight/2 - finish.getHeight()/2  , null);

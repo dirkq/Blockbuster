@@ -1,10 +1,7 @@
 package com.example.myapplication.blokjes;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-
-import com.example.myapplication.R;
+import android.graphics.Rect;
 
 public class Blokje extends Activity {
 
@@ -35,7 +32,14 @@ public class Blokje extends Activity {
     }
 
 
+    public void setLbX(int lbX) {
+        this.lbX = lbX;
+    }
 
+    public Boolean hit(Rect rectball){
+        Rect blokje = new Rect(lbX , lbY, roX, roY);
+        return blokje.intersect(rectball);
+    }
 
 
 
