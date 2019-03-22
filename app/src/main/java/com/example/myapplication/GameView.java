@@ -35,8 +35,8 @@ class GameView extends View {
 //  bal
     Bitmap ball, block1, finish;
     List<Blokje> blokjes = new ArrayList<>();
-    int aantalBlokjes = 5;
-    int hoogte, breedte, gap;
+    int hoogte, breedte;
+
 //  als de bal naar links gaat is going forward false anders true, als de bal naar boven gaat i goingup true,anders false
     Boolean goingForward = true, goingUp = false;
 
@@ -67,7 +67,6 @@ class GameView extends View {
         dHeight = point.y;
 
         hoogte = dHeight/100*18;
-        gap = dHeight / 1000 * 25;
         breedte = dWidth/20;
 
         ball = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
@@ -78,13 +77,9 @@ class GameView extends View {
         block1 = BitmapFactory.decodeResource(getResources(), R.drawable.block);
         block1 = Bitmap.createScaledBitmap(block1,breedte, hoogte, false);
 
-        for(int i = 0; i<aantalBlokjes; i++){
-            if ( i == 0){
-                blokjes.add(new Blokje(dWidth/2, 0, breedte ,hoogte));
-            }else if( i > 0){
-                blokjes.add(new Blokje(dWidth/2, blokjes.get(i-1).getlbY() + hoogte + gap, breedte,hoogte));
-            }
-        }
+        blokjes.add(new Blokje(dWidth/2, dHeight/100*25, breedte ,hoogte));
+        blokjes.add(new Blokje(dWidth/2, dHeight/100*50, breedte ,hoogte));
+        blokjes.add(new Blokje(dWidth/2, dHeight/100*75, breedte ,hoogte));
 
 //        finish = BitmapFactory.decodeResource(getResources(), R.drawable.block);
 //        finish = Bitmap.createScaledBitmap(finish, 200,200, false);
@@ -143,14 +138,9 @@ class GameView extends View {
             }
         }
 
-//        canvas.drawBitmap(block1, dWidth/2 - block1.getWidth()/2, dHeight/2 - block1.getHeight()/2, null);
         for(int i = 0; i<blokjes.size(); i++){
             canvas.drawBitmap(block1, blokjes.get(i).getlbX(), blokjes.get(i).getlbY(),null);
-
-//            blokjes[i] = new Blokje(dWidth/2, dHeight/20*i,300,300);
         }
-
-//        canvas.drawBitmap(block1, b1.getlbX(), b1.getlbY(),null);
 //        canvas.drawBitmap(finish, dWidth /10 *9 , dHeight/2 - finish.getHeight()/2  , null);
         canvas.drawBitmap(ball, balX, balY, null);
         handler.postDelayed(runnable, UPDATE_MILLIS);

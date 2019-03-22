@@ -15,7 +15,7 @@ public class Blokje extends Activity {
         this.width = width;
         this.height = height;
         this.lbX = lbX - width/2;
-        this.lbY = lbY;
+        this.lbY = lbY - height/2;
 
         this.rbX = lbX + width;
         this.rbY = lbY;
@@ -33,4 +33,10 @@ public class Blokje extends Activity {
     public int getlbY() {
         return lbY;
     }
+
+
+
+
+
+
 }
