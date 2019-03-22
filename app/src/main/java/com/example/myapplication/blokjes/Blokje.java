@@ -6,39 +6,47 @@ import android.graphics.Rect;
 public class Blokje extends Activity {
 
     int width, height;
-    int lbX, lbY, rbX, rbY, loX, loY, roX, roY;
+    int minX, minY, maxX, maxY;
 
-    public Blokje(int lbX, int lbY, int width, int height) {
+    public Blokje(int X, int Y, int width, int height) {
         this.width = width;
         this.height = height;
-        this.lbX = lbX - width/2;
-        this.lbY = lbY - height/2;
-
-        this.rbX = lbX + width;
-        this.rbY = lbY;
-
-        this.loX = lbX;
-        this.loY = lbY + height;
-
-        this.roX = loX + width;
-        this.roY = loY;
-    }
-    public int getlbX() {
-        return lbX;
+        this.minX = X - width/2;
+        this.maxX = minX + width;
+        this.maxY = Y - height/2;
+        this.minY = maxY + height;
     }
 
-    public int getlbY() {
-        return lbY;
+    public int getMinX() {
+        return minX;
     }
 
-
-    public void setLbX(int lbX) {
-        this.lbX = lbX;
+    public int getMinY() {
+        return minY;
     }
 
-    public Boolean hit(Rect rectball){
-        Rect blokje = new Rect(lbX , lbY, roX, roY);
-        return blokje.intersect(rectball);
+    public int getMaxX() {
+        return maxX;
+    }
+
+    public int getMaxY() {
+        return maxY;
+    }
+
+    public void remove() {
+        this.minX = -300;
+        this.maxX = -200;
+        this.minY = -200;
+        this.maxY = -100;
+    }
+
+    public boolean hit(int balX,int balY, int width, int height){
+        if (minX < balX+width && balX < maxX && minY > balY && balY+height > maxY) {
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
 

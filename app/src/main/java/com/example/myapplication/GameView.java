@@ -76,7 +76,7 @@ class GameView extends View {
         hoogte = dHeight/100*18;
         breedte = dWidth/20;
 
-        ball = BitmapFactory.decodeResource(getResources(), R.drawable.block);
+        ball = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
         ball = Bitmap.createScaledBitmap(ball, 100,100, false);
         balX = 50;
         balY = dHeight/2 - ball.getHeight()/2;
@@ -167,13 +167,12 @@ class GameView extends View {
 
         for(int i = 0; i<blokjes.size(); i++){
 
-            rectball = new Rect(balX, balY , balX + ball.getWidth(), balY + ball.getHeight());
 
-            b = blokjes.get(i).hit(rectball);
+            b = blokjes.get(i).hit(balX, balY,ball.getWidth(), ball.getHeight());
             if(b){
-                blokjes.get(i).setLbX(-100);
+                blokjes.get(i).remove();
             }
-            canvas.drawBitmap(block1, blokjes.get(i).getlbX(), blokjes.get(i).getlbY(),null);
+            canvas.drawBitmap(block1, blokjes.get(i).getMinX(), blokjes.get(i).getMaxY(),null);
         }
 //        canvas.drawBitmap(finish, dWidth /10 *9 , dHeight/2 - finish.getHeight()/2  , null);
         canvas.drawBitmap(ball, balX, balY, null);
