@@ -7,12 +7,13 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Point;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 
 
-class   GameView extends View {
+class GameView extends View {
 //  voor het runnen van de applicatie:
     Handler handler;
     Runnable runnable;
@@ -28,20 +29,24 @@ class   GameView extends View {
     int dWidth, dHeight;
 
 //  bal
-    Bitmap ball, block1,block2, block3, block4, block5, finish;
+    Bitmap ball, block1, finish, cursor, cursor1, cursor2, cursor3;
 
 //  als de bal naar links gaat is going forward false anders true, als de bal naar boven gaat i goingup true,anders false
     Boolean goingForward = true, goingUp = false;
 
 //  waarde die per x aantal miliseconde toegevoegt wil worden
-    int snelheidX = 20;
-    int snelheidY = 20;
+    int snelheidX = 0;
+    int snelheidY = 0;
+    double standaard = Math.sqrt(800);
 
-//  de coordienaten van de bal
+//  de coordinaten van de bal
     int balX, balY;
 
+//  de coordinaten van de cursor
+    int cursorX, cursorY, cursor1X, cursor1Y, cursor2X, cursor2Y, cursor3X, cursor3Y;
+
 //  of het spel gestart is en de bal weggeschoten is
-    boolean touched;
+    boolean touched, fired;
 
 
     public GameView(Context context) {
@@ -59,26 +64,33 @@ class   GameView extends View {
         dWidth = point.x;
         dHeight = point.y;
 
-
         ball = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
         ball = Bitmap.createScaledBitmap(ball, 100,100, false);
         balX = 50;
         balY = dHeight/2 - ball.getHeight()/2;
 
+        cursor = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
+        cursor = Bitmap.createScaledBitmap(cursor, 50,50, false);
+        cursorX = -20;
+        cursorY = -20;
+
+        cursor1 = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
+        cursor1 = Bitmap.createScaledBitmap(cursor1, 40,40, false);
+        cursor1X = -20;
+        cursor1Y = -20;
+
+        cursor2 = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
+        cursor2 = Bitmap.createScaledBitmap(cursor2, 30,30, false);
+        cursor2X = -20;
+        cursor2Y = -20;
+
+        cursor3 = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
+        cursor3 = Bitmap.createScaledBitmap(cursor3, 20,20, false);
+        cursor3X = -20;
+        cursor3Y = -20;
+
         block1 = BitmapFactory.decodeResource(getResources(), R.drawable.block);
-        block1 = Bitmap.createScaledBitmap(block1, dWidth/20,dHeight/(11/2), false);
-
-        block2 = BitmapFactory.decodeResource(getResources(), R.drawable.block2);
-        block2 = Bitmap.createScaledBitmap(block2, dWidth/20, dHeight/(11/2), false);
-
-        block3 = BitmapFactory.decodeResource(getResources(), R.drawable.block);
-        block3 = Bitmap.createScaledBitmap(block3, dWidth/20,dHeight/(11/2), false);
-
-        block4 = BitmapFactory.decodeResource(getResources(), R.drawable.block2);
-        block4 = Bitmap.createScaledBitmap(block4, dWidth/20, dHeight/(11/2), false);
-
-        block5 = BitmapFactory.decodeResource(getResources(), R.drawable.block);
-        block5 = Bitmap.createScaledBitmap(block5, dWidth/20,dHeight/(11/2), false);
+        block1 = Bitmap.createScaledBitmap(block1, 300,300, false);
 
         finish = BitmapFactory.decodeResource(getResources(), R.drawable.block);
         finish = Bitmap.createScaledBitmap(finish, 200,200, false);
@@ -93,7 +105,6 @@ class   GameView extends View {
             int minY = 0;
             int maxX = dWidth - ball.getWidth();
             int maxY = dHeight - ball.getHeight()*2;
-
 //          bal gaat naar link
             if ((balX - snelheidX) < minX) {
                 if ((balX - snelheidX) < minX) {
@@ -137,13 +148,13 @@ class   GameView extends View {
             }
         }
 
-        canvas.drawBitmap(block1, dWidth/2 - block1.getWidth()/2 , 0, null);
+        canvas.drawBitmap(block1, dWidth/2 - block1.getWidth()/2, dHeight/2 - block1.getHeight()/2, null);
         canvas.drawBitmap(finish, dWidth /10 *9 , dHeight/2 - finish.getHeight()/2  , null);
-        canvas.drawBitmap(block2, dWidth/2 - block2.getWidth()/2, block2.getHeight()+ block2.getHeight()/22, null);
-        canvas.drawBitmap(block3, dWidth/2 - block2.getWidth()/2, block3.getHeight() * 2 + block2.getHeight()/12 , null);
-        canvas.drawBitmap(block4, dWidth/2 - block2.getWidth()/2, block4.getHeight()* 3 +  block4.getHeight()/8, null);
-        canvas.drawBitmap(block5, dWidth/2 - block2.getWidth()/2, block5.getHeight()* 4 + block5.getHeight()/1, null);
         canvas.drawBitmap(ball, balX, balY, null);
+        canvas.drawBitmap(cursor, cursorX, cursorY, null);
+        canvas.drawBitmap(cursor1, cursor1X, cursor1Y, null);
+        canvas.drawBitmap(cursor2, cursor2X, cursor2Y, null);
+        canvas.drawBitmap(cursor3, cursor3X, cursor3Y, null);
         handler.postDelayed(runnable, UPDATE_MILLIS);
     }
 
@@ -151,7 +162,44 @@ class   GameView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int action = event.getAction();
+        int x = (int)event.getX();
+        int y = (int)event.getY();
+        int intervalx = (50 + ball.getWidth() / 2 - x);
+        int intervaly = (dHeight / 2 - y);
+        double slope = Math.sqrt(intervalx * intervalx + intervaly * intervaly);
+        double vergroting = standaard / slope;
+        double vergrootx = vergroting * intervalx;
+        double vergrooty = vergroting * intervaly;
+        if (fired == false) {
+            cursor1X = -(int)vergrootx *65/10 + (ball.getWidth()/2+50 - cursor1.getWidth()/2);
+            cursor1Y = -(int)vergrooty *65/10 + (dHeight/2 - cursor1.getHeight()/2);
+            cursor2X = -(int)vergrootx *4 + (ball.getWidth()/2+50 - cursor2.getWidth()/2);
+            cursor2Y = -(int)vergrooty *4 + (dHeight/2 - cursor2.getHeight()/2);
+            cursor3X = -(int)vergrootx *2 + (ball.getWidth()/2+50 - cursor3.getWidth()/2);
+            cursor3Y = -(int)vergrooty *2 + (dHeight/2 - cursor3.getHeight()/2);
+            cursorX = -(int)vergrootx *95/10 + (ball.getWidth()/2+50 - cursor.getWidth()/2);
+            cursorY = -(int)vergrooty *95/10 + (dHeight/2 - cursor.getHeight()/2);
+        }
         if(action == MotionEvent.ACTION_DOWN){
+        }
+        if (action == MotionEvent.ACTION_UP){
+            if (fired == false) {
+                snelheidX = -(int)vergrootx;
+                snelheidY = -(int)vergrooty;
+                if (snelheidY < 0){
+                    snelheidY *= -1;
+                    goingUp = true;
+                }
+                if (snelheidX < 0) {
+                    snelheidX *= -1;
+                    goingForward = false;
+                }
+                cursorX = -80;
+                cursor1X = -80;
+                cursor2X = -80;
+                cursor3X = -80;
+            }
+            fired = true;
             touched = true;
         }
         return true;
