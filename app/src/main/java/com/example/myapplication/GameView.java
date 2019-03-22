@@ -170,8 +170,6 @@ class GameView extends View {
         double vergroting = standaard / slope;
         double vergrootx = vergroting * intervalx;
         double vergrooty = vergroting * intervaly;
-        int newx = -(int)vergrootx *95/10 + (ball.getWidth()/2+50 - cursor.getWidth()/2);
-        int newy = -(int)vergrooty *95/10 + (dHeight/2 - cursor.getHeight()/2);
         if (fired == false) {
             cursor1X = -(int)vergrootx *65/10 + (ball.getWidth()/2+50 - cursor1.getWidth()/2);
             cursor1Y = -(int)vergrooty *65/10 + (dHeight/2 - cursor1.getHeight()/2);
@@ -179,10 +177,8 @@ class GameView extends View {
             cursor2Y = -(int)vergrooty *4 + (dHeight/2 - cursor2.getHeight()/2);
             cursor3X = -(int)vergrootx *2 + (ball.getWidth()/2+50 - cursor3.getWidth()/2);
             cursor3Y = -(int)vergrooty *2 + (dHeight/2 - cursor3.getHeight()/2);
-//            cursorX = x - cursor.getWidth() / 2;
-//            cursorY = y - cursor.getHeight() / 2;
-            cursorX = newx;
-            cursorY = newy;
+            cursorX = -(int)vergrootx *95/10 + (ball.getWidth()/2+50 - cursor.getWidth()/2);
+            cursorY = -(int)vergrooty *95/10 + (dHeight/2 - cursor.getHeight()/2);
         }
         if(action == MotionEvent.ACTION_DOWN){
         }
