@@ -12,7 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 
-class GameView extends View {
+class   GameView extends View {
 //  voor het runnen van de applicatie:
     Handler handler;
     Runnable runnable;
@@ -28,7 +28,7 @@ class GameView extends View {
     int dWidth, dHeight;
 
 //  bal
-    Bitmap ball, block1, finish;
+    Bitmap ball, block1,block2, block3, block4, block5, finish;
 
 //  als de bal naar links gaat is going forward false anders true, als de bal naar boven gaat i goingup true,anders false
     Boolean goingForward = true, goingUp = false;
@@ -59,13 +59,26 @@ class GameView extends View {
         dWidth = point.x;
         dHeight = point.y;
 
+
         ball = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
         ball = Bitmap.createScaledBitmap(ball, 100,100, false);
         balX = 50;
         balY = dHeight/2 - ball.getHeight()/2;
 
         block1 = BitmapFactory.decodeResource(getResources(), R.drawable.block);
-        block1 = Bitmap.createScaledBitmap(block1, 300,300, false);
+        block1 = Bitmap.createScaledBitmap(block1, dWidth/20,dHeight/(11/2), false);
+
+        block2 = BitmapFactory.decodeResource(getResources(), R.drawable.block2);
+        block2 = Bitmap.createScaledBitmap(block2, dWidth/20, dHeight/(11/2), false);
+
+        block3 = BitmapFactory.decodeResource(getResources(), R.drawable.block);
+        block3 = Bitmap.createScaledBitmap(block3, dWidth/20,dHeight/(11/2), false);
+
+        block4 = BitmapFactory.decodeResource(getResources(), R.drawable.block2);
+        block4 = Bitmap.createScaledBitmap(block4, dWidth/20, dHeight/(11/2), false);
+
+        block5 = BitmapFactory.decodeResource(getResources(), R.drawable.block);
+        block5 = Bitmap.createScaledBitmap(block5, dWidth/20,dHeight/(11/2), false);
 
         finish = BitmapFactory.decodeResource(getResources(), R.drawable.block);
         finish = Bitmap.createScaledBitmap(finish, 200,200, false);
@@ -124,8 +137,12 @@ class GameView extends View {
             }
         }
 
-        canvas.drawBitmap(block1, dWidth/2 - block1.getWidth()/2, dHeight/2 - block1.getHeight()/2, null);
+        canvas.drawBitmap(block1, dWidth/2 - block1.getWidth()/2 , 0, null);
         canvas.drawBitmap(finish, dWidth /10 *9 , dHeight/2 - finish.getHeight()/2  , null);
+        canvas.drawBitmap(block2, dWidth/2 - block2.getWidth()/2, block2.getHeight()+ block2.getHeight()/22, null);
+        canvas.drawBitmap(block3, dWidth/2 - block2.getWidth()/2, block3.getHeight() * 2 + block2.getHeight()/12 , null);
+        canvas.drawBitmap(block4, dWidth/2 - block2.getWidth()/2, block4.getHeight()* 3 +  block4.getHeight()/8, null);
+        canvas.drawBitmap(block5, dWidth/2 - block2.getWidth()/2, block5.getHeight()* 4 + block5.getHeight()/1, null);
         canvas.drawBitmap(ball, balX, balY, null);
         handler.postDelayed(runnable, UPDATE_MILLIS);
     }
