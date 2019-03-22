@@ -6,11 +6,17 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+
+import com.example.myapplication.blokjes.Blokje;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 class GameView extends View {
@@ -30,7 +36,10 @@ class GameView extends View {
 
 //  bal
     Bitmap ball, block1, finish, cursor, cursor1, cursor2, cursor3;
-
+    List<Blokje> blokjes = new ArrayList<>();
+    int hoogte, breedte;
+    Rect rectball;
+    boolean b;
 //  als de bal naar links gaat is going forward false anders true, als de bal naar boven gaat i goingup true,anders false
     Boolean goingForward = true, goingUp = false;
 
@@ -64,7 +73,10 @@ class GameView extends View {
         dWidth = point.x;
         dHeight = point.y;
 
-        ball = BitmapFactory.decodeResource(getResources(), R.drawable.ball);
+        hoogte = dHeight/100*18;
+        breedte = dWidth/20;
+
+        ball = BitmapFactory.decodeResource(getResources(), R.drawable.block);
         ball = Bitmap.createScaledBitmap(ball, 100,100, false);
         balX = 50;
         balY = dHeight/2 - ball.getHeight()/2;
@@ -90,10 +102,14 @@ class GameView extends View {
         cursor3Y = -20;
 
         block1 = BitmapFactory.decodeResource(getResources(), R.drawable.block);
-        block1 = Bitmap.createScaledBitmap(block1, 300,300, false);
+        block1 = Bitmap.createScaledBitmap(block1,breedte, hoogte, false);
 
-        finish = BitmapFactory.decodeResource(getResources(), R.drawable.block);
-        finish = Bitmap.createScaledBitmap(finish, 200,200, false);
+        blokjes.add(new Blokje(dWidth/2, dHeight/100*25, breedte ,hoogte));
+        blokjes.add(new Blokje(dWidth/2, dHeight/100*50, breedte ,hoogte));
+        blokjes.add(new Blokje(dWidth/2, dHeight/100*75, breedte ,hoogte));
+
+//        finish = BitmapFactory.decodeResource(getResources(), R.drawable.block);
+//        finish = Bitmap.createScaledBitmap(finish, 200,200, false);
     }
 
     @Override
@@ -105,6 +121,7 @@ class GameView extends View {
             int minY = 0;
             int maxX = dWidth - ball.getWidth();
             int maxY = dHeight - ball.getHeight()*2;
+
 //          bal gaat naar link
             if ((balX - snelheidX) < minX) {
                 if ((balX - snelheidX) < minX) {
@@ -148,8 +165,17 @@ class GameView extends View {
             }
         }
 
-        canvas.drawBitmap(block1, dWidth/2 - block1.getWidth()/2, dHeight/2 - block1.getHeight()/2, null);
-        canvas.drawBitmap(finish, dWidth /10 *9 , dHeight/2 - finish.getHeight()/2  , null);
+        for(int i = 0; i<blokjes.size(); i++){
+
+            rectball = new Rect(balX, balY , balX + ball.getWidth(), balY + ball.getHeight());
+
+            b = blokjes.get(i).hit(rectball);
+            if(b){
+                blokjes.get(i).setLbX(-100);
+            }
+            canvas.drawBitmap(block1, blokjes.get(i).getlbX(), blokjes.get(i).getlbY(),null);
+        }
+//        canvas.drawBitmap(finish, dWidth /10 *9 , dHeight/2 - finish.getHeight()/2  , null);
         canvas.drawBitmap(ball, balX, balY, null);
         canvas.drawBitmap(cursor, cursorX, cursorY, null);
         canvas.drawBitmap(cursor1, cursor1X, cursor1Y, null);
