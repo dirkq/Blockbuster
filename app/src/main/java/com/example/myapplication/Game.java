@@ -36,6 +36,7 @@ class GameView extends View {
 
 //  bal
     Bitmap ball, block1, finish, cursor, cursor1, cursor2, cursor3;
+
     List<Blokje> blokjes = new ArrayList<>();
     int hoogte, breedte;
     Rect rectball;
